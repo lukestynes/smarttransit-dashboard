@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SmartTransit Dashboard Crash Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="PruneCluster/LeafletStyleSheet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"/>
+    <link rel="stylesheet" href="LeafletLoader/Control.Loading.css" />
+    <link rel="stylesheet" href="LeafletLoadScreen/leaflet.loader.css" />
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+<script src="PruneCluster/dist/PruneCluster.js"></script>
+<script src="LeafletLoader/Control.Loading.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script src="LeafletLoadScreen/leaflet.loader.js"></script>
+<script type="text/javascript">
+    let map;
+    var javaScriptBridge; // must be declared as var (will not be correctly assigned in java with let keyword)
+    var pruneCluster = new PruneClusterForLeaflet();
+    var routeCluster = new PruneClusterForLeaflet();
+    var heatLayer;
+    var heatRoute;
+    var route;
+    let markers = [];
+    var tableName;
+
+    /**
+     * This object can be returned to our java code, where we can call the functions we define inside it
+     */
+    let jsConnector = {
+        displayRoute: displayRoute,
+        removeRoute: removeRoute,
+        initMap: initMap,
+        updateSavedTable: updateSavedTable,
+        updateFromSearch: updateFromSearch,
+        goToLocation: goToLocation,
+        showPins: showPins,
+        showHeat: showHeat,
+        hidePins: hidePins,
+        hideHeat: hideHeat,
+        showPinsRoute: showPinsRoute,
+        hidePinsRoute: hidePinsRoute,
+        showHeatRoute: showHeatRoute,
+        hideHeatRoute: hideHeatRoute,
+        showRoutePins: showRoutePins,
+    };
+
+    /**
+     * Creates and initializes the map.
+     * The map is centered on New Zealand and Pacific Islands, at an appropriate zoom.
+     * To prevent issues with wrapping, the map cannot be zoomed out excessively, and will not pan beyond a single 360 degree wrap of the world map.
+     * A tile layer is established.
+     */
+    function initMap(table) {
+        var mapOptions = {
+            center: [-42.0, 177.0],
+            zoom: 5,
+            maxBounds: L.latLngBounds(
+                L.latLng(-180, -90), //bottom left
+                L.latLng(180, 270) //top right
+            ),
+            minZoom: 2,
+            detectRetina: true,
+            loadingControl: true
+        }
+        map = new L.map('map', mapOptions);
+        new L.TileLayer('https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png', { // UCs tilemap server
+            attribution: '© OpenStreetMap contributors<br>Served by University of Canterbury'
+        }).addTo(map)
+
+        tableName = table;
+    }
+
+    /**
+     * Updates the saved table name which is passed for the extended view modal
+     * @param table the unique name of the table.
+     */
+    function updateSavedTable(table) {
+        tableName = table;
+    }
+
+    /**
+     * Updates the marker/heatmap layers in the map to reflect the passed-in location data.
+     * First the existing layers are removed from the map if present.
+     * Then, a new marker layer is initialized and populated with the passed-in data.
+     * As heatLayers require a different format of data, we also create an array of pins to initialize them from.
+     * The horizontal/lng coordinates of pins are wrapped to lie within the current view range (i.e., -179 becomes 181).
+     * Finally, we update the stored marker and heatLayer layers to reflect the new data.
+     * @param locations JSONString of JSONArray of crash objects
+     */
+    function updateFromSearch(locations) {
+        // Remove the old layers from map before updating them.
+        if (map.hasLayer(pruneCluster)) map.removeLayer(pruneCluster);
+        if (map.hasLayer(heatLayer)) map.removeLayer(heatLayer);
+        if (map.hasLayer(routeCluster)) map.removeLayer(routeCluster);
+        if (map.hasLayer(heatRoute)) map.removeLayer(heatRoute);
+
+        // Reset the cluster to start again
+        pruneCluster = new PruneClusterForLeaflet();
+
+        var locationList = JSON.parse(locations);
+        var heatPins = [];
+
+        // Creates a marker for every crash returned
+        locationList.forEach(function(location) {
+            // Extract the data from the pins
+            var lng = location.lng;
+            var lat = location.lat;
+            var severity = location.severity;
+            var id = location.id;
+            var year = location.year;
+
+            // Correct the lat and lng values
+            while (lng >= 270) {
+                lng -= 360;
+            }
+            while (lng < -90) {
+                lng += 360;
+            }
+            // Add the pins to the heatmap
+            var latLng = L.latLng(lat, lng);
+            heatPins.push(latLng);
+
+            // Generate a marker for each crash and assign it the relevant data.
+            var marker = new PruneCluster.Marker(lat, lng);
+            marker.data.id = id;
+            marker.data.popup = generatePopup(id, year, severity);
+            marker.category = severity;
+            marker.data.icon = generateIcon(severity);
+            pruneCluster.RegisterMarker(marker);
+        });
+
+        pruneCluster.ProcessView(); // Ensures that the PruneCluster updates.
+
+        //Generate the heatmap
+        heatLayer = L.heatLayer(heatPins, {
+            radius: 20,
+            blur: 10,
+            minOpacity: 0.05,
+            max: 15,
+            gradient: {
+                0.2: "#99B6FF",
+                0.4: "#C799FF",
+                0.6: "#F9EE81",
+                0.8: "#FF9850",
+                1: "#FF606D"
+            }
+        });
+    }
+
+    /**
+     * Generates popups on the fly for a marker, this improves performance as all the points have less data saved to them.
+     * @param id the ID of the crash
+     * @param severity the severity of the crash
+     * @param year the year of the crash
+     * @returns {string} a HTML string that is displayed in the Popup on a marker
+     */
+    function generatePopup(id, year, severity) {
+        return `Crash #${id}<hr />Year: ${year}<br />Severity: ${severity}<br /><div style="text-align: center;"><button style="font-family: 'Arial'; font-size:12px; background-color: #2B8A68;color: #fff;border: none; padding:5px; cursor: pointer; border-radius: 10px; text-align: center; margin-top: 10px;" onclick="handleExtendedView(${id})">View More</button></div>`;
+    }
+
+    /**
+     * Handles opening the extended view modal view the JSBridge
+     * @param id the id of the selected crash
+     */
+    function handleExtendedView(id) {
+        javaScriptBridge.openExtendedViewModal(id, tableName);
+    }
+
+    /**
+     * Generates pin icons on the fly to improve application performance. Can colour the pins based on severity
+     * @param severity the severity of the crash
+     * @returns icon the icon for the marker
+     */
+    function generateIcon(severity) {
+        var icon;
+
+        if (severity === "Non-Injury Crash") {
+            icon = L.icon({
+                iconUrl: 'img/green-pin.svg',
+                iconSize: [21, 30],
+                iconAnchor:   [10, 0]
+            });
+        } else if (severity === "Minor Crash") {
+            icon = L.icon({
+                iconUrl: 'img/yellow-pin.svg',
+                iconSize: [21, 30],
+                iconAnchor:   [10, 0]
+            });
+        } else if (severity === "Serious Crash") {
+            icon = L.icon({
+                iconUrl: 'img/orange-pin.svg',
+                iconSize: [21, 30],
+                iconAnchor:   [10, 0]
+            });
+        } else if (severity === "Fatal Crash") {
+            icon = L.icon({
+                iconUrl: 'img/red-pin.svg',
+                iconSize: [21, 30],
+                iconAnchor:   [10, 0]
+            });
+        } else { // Default pin colour
+            icon = L.icon({
+                iconUrl: 'img/pin.svg',
+                iconSize: [21, 30],
+                iconAnchor:   [10, 0]
+            });
+        }
+
+        return icon;
+    }
+
+    /**
+     * Show the pin layer if not already visible
+     */
+    function showPins() {
+        if (!map.hasLayer(pruneCluster)) {
+            pruneCluster.ProcessView(); // Ensures that the cluster is updated
+            map.addLayer(pruneCluster);
+        }
+    }
+
+    /**
+     * Hide the pin layer if visible
+     */
+    function hidePins() {
+        if (map.hasLayer(pruneCluster)) map.removeLayer(pruneCluster);
+    }
+
+    /**
+     * Show the heat layer if not already visible
+     */
+    function showHeat() {
+        if (!map.hasLayer(heatLayer)) map.addLayer(heatLayer);
+    }
+
+    /**
+     * Hide the heat layer if visible
+     */
+    function hideHeat() {
+        if (map.hasLayer(heatLayer)) map.removeLayer(heatLayer);
+    }
+
+    /**
+     * Shows crashes along a route on map
+     */
+    function showPinsRoute() {
+        if (!map.hasLayer(routeCluster)) map.addLayer(routeCluster);
+    }
+
+    /**
+     * Hides crashes along a route on map
+     */
+    function hidePinsRoute() {
+        if (map.hasLayer(routeCluster)) map.removeLayer(routeCluster);
+    }
+
+    /**
+     * Shows heat map along a route
+     */
+    function showHeatRoute() {
+        if (!map.hasLayer(heatRoute) && heatRoute !== null) map.addLayer(heatRoute);
+    }
+
+    /**
+     * Hides heat map along a route
+     */
+    function hideHeatRoute() {
+        if (map.hasLayer(heatRoute) && heatRoute !== null) map.removeLayer(heatRoute);
+    }
+
+    /**
+     * Pans the map to a given coordinate pair.
+     * Zooms in to 18 at the moment.
+     * Will need to consider a sensible parameter for zoom level later.
+     */
+    function goToLocation(lat, lng) {
+        map.setView(L.latLng(lat, lng), 18);
+    }
+
+    /**
+     * Adds a marker to the map and stores it in the markers array for later use (e.g. removal)
+     * @param title tooltip to display on hover
+     * @param lat latitude to place marker at
+     * @param lng longitude to place marker at
+     * @author Morgan English
+     */
+    // function addMarker(title, lat, lng) {
+    //     // Generate a marker for each crash and assign it the relevant data.
+    //     var marker = new PruneCluster.Marker(lat, lng);
+    //     // marker.data.id = location.id;
+    //     // marker.data.popup = `Crash (${id}): Year: ${year} Severity: ${severity}`;
+    //     // marker.category = severity;
+    //     marker.data.icon = generateIcon('');
+    //     pruneCluster.RegisterMarker(marker);
+    // }
+
+    /**
+     * Displays a route with two or more waypoints for cars (e.g. roads and ferries) and displays it on the map
+     * @param waypointsIn a string representation of an array of lat lng json objects [("lat": -42.0, "lng": 173.0), ...]
+     * @author Morgan English
+     */
+
+    function displayRoute(waypointsIn) {
+        var waypointsArray = JSON.parse(waypointsIn);
+        var waypoints = [];
+
+        removeRoute();
+
+        waypointsArray.forEach(element => waypoints.push(new L.latLng(element.lat, element.lng)));
+
+        route = L.Routing.control({
+            waypoints: waypoints,
+            routeWhileDragging: true,
+            icon: generatePopup('')
+        }).addTo(map).on('routesfound', (e) => {
+             javaScriptBridge.catchArray(JSON.stringify(e.routes[0]));
+        });
+    }
+
+    /**
+     * Displays the crashes along a route on the map
+     * @param locations a JSON array of the relevant crashes and their data
+     */
+    function showRoutePins(locations) {
+        // Remove the old layers from map before updating them.
+        if (map.hasLayer(routeCluster)) map.removeLayer(routeCluster);
+        if (map.hasLayer(heatRoute)) map.removeLayer(heatRoute);
+
+        // Reset the cluster to start again
+        routeCluster = new PruneClusterForLeaflet();
+
+        var locationList = JSON.parse(locations);
+        var heatPins = [];
+
+        // Creates a marker for every crash returned
+        locationList.forEach(function(location) {
+            // Extract the data from the pins
+            var lng = location.lng;
+            var lat = location.lat;
+            var severity = location.severity;
+            var id = location.id;
+            var year = location.year;
+
+            // Correct the lat and lng values
+            while (lng >= 270) {
+                lng -= 360;
+            }
+            while (lng < -90) {
+                lng += 360;
+            }
+            // Add the pins to the heatmap
+            var latLng = L.latLng(lat, lng);
+            heatPins.push(latLng);
+
+            // Generate a marker for each crash and assign it the relevant data.
+            var marker = new PruneCluster.Marker(lat, lng);
+            marker.data.id = id;
+            marker.data.popup = generatePopup(id, year, severity);
+            marker.category = severity;
+            marker.data.icon = generateIcon(severity);
+            routeCluster.RegisterMarker(marker);
+        });
+
+        routeCluster.ProcessView(); // Ensures that the PruneCluster updates.
+
+        //Generate the heatmap
+        heatRoute = L.heatLayer(heatPins, {
+            radius: 30,
+            blur: 10,
+            minOpacity: 0.2,
+            max: 10,
+            gradient: {
+                0.2: "#99B6FF",
+                0.4: "#C799FF",
+                0.6: "#F9EE81",
+                0.8: "#FF9850",
+                1: "#FF606D"
+            }
+        });
+    }
+
+    /**
+     * Removes the current route being displayed (will not do anything if there is no route currently displayed)
+     * @author Morgan English
+     */
+    function removeRoute() {
+        if (route) {
+            route.remove();
+            if (map.hasLayer(routeCluster)) map.removeLayer(routeCluster);
+            if (map.hasLayer(heatRoute)) map.removeLayer(heatRoute);
+            routeCluster = new PruneClusterForLeaflet();
+            heatRoute = null;
+
+        }
+        for (var i = 0; i < markers.length; i++) {
+            var marker = markers[i];
+            map.removeLayer(marker);
+        }
+        markers = [];
+    }
+</script>
+</body>
+</html>

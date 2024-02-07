@@ -1,0 +1,197 @@
+.mfx-button {
+    -fx-font-family: 'Visby Round CF Medium';
+    -fx-background-color: #2B8A68;
+    -fx-border-color: transparent;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
+    -fx-text-fill: #FFF;;
+    -fx-font-weight: bold;
+    -fx-padding: 10px;
+    -fx-border-insets: 2px;
+    -fx-background-insets: 3px;
+}
+
+
+.mfx-button:hover {
+    -fx-font-family: 'Visby Round CF Medium';
+    -fx-background-color: #2B8A6890;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
+    -fx-padding: 10px;
+    -fx-border-insets: 2px;
+    -fx-background-insets: 3px;
+}
+
+#icon {
+    -fx-fill: #FFF;
+}
+
+.button {
+    -fx-font-family: 'Visby Round CF Medium';
+    -fx-background-color: #2B8A68;
+    -fx-border-color: transparent;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-text-fill: #FFF;
+    -fx-font-weight: bold;
+
+}
+
+.button:hover {
+    -fx-font-family: 'Visby Round CF Medium';
+    -fx-background-color: #2B8A6890;
+    -fx-text-fill: #383636;
+}
+
+.button:hover #icon {
+    -fx-fill: #383636;
+}
+
+
+.combo-box-base {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-background-color: #2B8A6815;
+    -fx-border-color: transparent;
+}
+
+.combo-box-base > .text-field {
+    -fx-background-color: transparent;
+    -fx-animated: true;
+}
+
+.combo-box-base:hover {
+    -fx-background-color: #2B8A6850;
+}
+
+.combo-box .list-cell {
+    -fx-background: white;
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-base-color;
+    -fx-padding: 3 0 2 7;
+    -fx-cell-size: 1.66667em;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white, white;
+    -fx-background-insets: 0, 1;
+    /*-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );*/
+
+}
+
+.combo-box:filled {
+    -fx-background-color: pink;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: #2B8A6815;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+.combo-box-base .list-cell {
+    -fx-opacity: 1;
+}
+
+.combo-box-base:focused {
+    -fx-background-color: -fx-focus-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 6.4, 4, 5, 3;
+    -fx-background-insets: -1.4, 0, 1, 2;
+}
+
+.combo-box-base:disabled {
+    -fx-opacity: .3;
+}
+
+
+.thumb {
+    -fx-background-color: #2b8a68;
+    -fx-fill: #2b8a68;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+
+.root {
+    -fx-background-color: white;
+    -fx-font-family: Inter;
+}
+
+.anchor-pane {
+    -fx-background-color: #FFF;
+}
+
+.titled-pane {
+    -fx-text-fill: white;
+    -fx-font-family: 'Visby Round CF Medium';
+}
+
+.titled-pane > .title {
+    -fx-background-color: #2B8A68;
+    -fx-text-fill: white;
+    -fx-font-family: 'Visby Round CF Medium';
+    -fx-border-style: hidden hidden solid hidden;
+    -fx-border-width: 2;
+    -fx-border-color: white;
+    -fx-font-weight: bold;
+}
+
+
+.titled-pane > .title > .arrow-button .arrow {
+
+    -fx-background-color: #fff7e2;
+    -fx-background-insets: 1 0 -1 0, 0;
+    -fx-padding: 0.25em 0.3125em 0.25em 0.3125em;
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
+.titled-pane:collapsed > .title > .arrow-button .arrow {
+    -fx-rotate: -90;
+}
+
+.titled-pane > *.content {
+    -fx-background-color: white;
+    -fx-padding: 0.167em;
+}
+
+.titled-pane:focused > .title > .arrow-button .arrow {
+    -fx-background-color: #fff7e2;
+}
+
+.scroll-bar {
+    -fx-background-color: #eeeeee;
+    -fx-fill: #eeeeee;
+    -fx-border-radius: 0.5em;
+    -fx-background-radius: 0;
+
+}
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+    -fx-background-color: #2B8A6815;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0.5em;
+
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-border-color: white;
+    -fx-background-color: white;
+}
+
+.root {
+    -fx-font-family: 'Visby Round CF Medium';
+    -fx-text-fill: #383636;
+    -fx-font-size: 14px;
+}
+
+:selected {
+    color: teal;
+}
+
+:focused {
+    color: teal;
+}

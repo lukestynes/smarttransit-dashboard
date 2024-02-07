@@ -1,0 +1,23 @@
+#infoBox {
+    -fx-font-family: 'Visby Round CF Medium';
+    -fx-text-fill: #383636;
+    -fx-background-color: #2B8A6815;
+    -fx-border-color: transparent;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
+    -fx-padding: 10px;
+
+}
+
+.chart-legend {
+    -fx-background-color: #2B8A6815;
+    -fx-padding: 20px;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 2;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #383636;
+}

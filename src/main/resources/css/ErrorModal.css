@@ -1,0 +1,9 @@
+.dialog-pane {
+    -fx-border-color: #2B8A6815;
+    -fx-border-width: 2.0px;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #2B8A6815;
+}
+

@@ -1,0 +1,53 @@
+.check-box .box {
+    -fx-background-color: #2B8A6830;
+    -fx-border-radius: 3px;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #2B8A68;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #2B8A6830;
+
+}
+
+.mfx-toggle-button {
+    -mfx-main: #2B8A68;
+    -mfx-secondary: #424242;
+
+    -fx-padding: 10;
+}
+
+.toggle-button {
+    -fx-font-family: 'Visby Round CF Medium';
+    -fx-background-color: #2b8a68;
+    -fx-border-color: transparent;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+
+}
+
+.toggle-button:hover {
+    -fx-font-family: 'Visby Round CF Medium';
+    -fx-background-color: #2B8A6840;
+    -fx-text-fill: black;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-padding: 0px;
+}
+
+
+. titled-pane .button {
+    -fx-font-family: 'Visby Round CF Medium';
+    -fx-background-color: #2B8A68;
+    -fx-border-color: transparent;
+
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-text-fill: #FFF;
+    -fx-font-weight: bold;
+
+}

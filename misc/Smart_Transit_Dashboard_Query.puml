@@ -1,0 +1,8 @@
+@startuml Smart_Transit_Dashboard_v3_Lite
+!includesub Smart_Transit_Dashboard_v4.puml!Asynchronous
+
+skinParam lineType ortho
+skinparam classFontSize 20
+remove Frontend
+
+@enduml

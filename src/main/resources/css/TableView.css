@@ -1,0 +1,161 @@
+.table-view {
+    -fx-background-color: transparent;
+    -fx-padding: 20px;
+}
+
+
+.table-view .table-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 2 0 2 10px;
+    -fx-border-color: #eeeeee;
+    -fx-border-width: 0;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: grey;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #2B8A6815;
+    -fx-border-color: #eeeeee;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.table-row-cell:even {
+    -fx-background-color: white;
+    -fx-border-color: #eeeeee;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #2B8A6845;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #2B8A6830;
+}
+
+
+.column-header > .viewport {
+
+    -fx-background-color: transparent;
+}
+
+.column-header {
+    -fx-background-color: #2B8A68;
+
+    -fx-text-fill: white;
+    -fx-accent: white;
+    -fx-border-color: #eeeeee;
+
+    -fx-background-radius: 0;
+    -fx-background-insets: 0 0px 0 0;
+    -fx-padding: 0 0 5px 0;
+    -fx-border-width: 0.5px 0.5px 0 0;
+}
+
+.column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bolder;
+    -fx-font-size: 11pt;
+}
+
+.pagination {
+    -fx-max-page-indicator-count: 5;
+
+}
+
+.pagination > .pagination-control > .control-box > .number-button {
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: #2B8A6840;
+    -fx-border-width: 1.25;
+    -fx-background-color: white;
+    -fx-start-margin: 0;
+    -fx-end-margin: 0;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+    -fx-font-size: 14;
+    -fx-alignment: center;
+    -fx-fill: #2B8A68;
+    -fx-text-fill: black;
+}
+
+.pagination > .pagination-control > .control-box > .number-button:hover {
+    -fx-background-color: #2b8a68;
+    -fx-text-fill: white;
+}
+
+.pagination > .pagination-control > .control-box > .number-button:focused,
+.pagination > .pagination-control > .control-box > .number-button:pressed,
+.pagination > .pagination-control > .control-box > .number-button:hover,
+.pagination > .pagination-control > .control-box > .number-button:selected {
+    -fx-background-color: #2B8A68;
+    -fx-text-fill: white;
+}
+
+.pagination > .pagination-control > .control-box > .left-arrow-button {
+    -fx-border-radius: 10 0 0 10;
+    -fx-background-radius: 10 0 0 10;
+    -fx-border-color: #2B8A6860;
+    -fx-border-width: 0;
+    -fx-background-color: #2B8A6860;
+    -fx-start-margin: 0;
+    -fx-end-margin: 0;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+    -fx-font-size: 14;
+    -fx-alignment: center;
+    -fx-fill: #2B8A68;
+}
+
+.pagination > .pagination-control > .control-box > .left-arrow-button:hover {
+
+    -fx-background-color: #2b8a68;
+    -fx-text-fill: white;
+}
+
+.pagination > .pagination-control > .control-box > .right-arrow-button {
+    -fx-border-radius: 0 10 10 0;
+    -fx-background-radius: 0 10 10 0;
+    -fx-border-color: #2B8A6860;
+    -fx-border-width: 0;
+    -fx-background-color: #2B8A6860;
+    -fx-start-margin: 0;
+    -fx-end-margin: 0;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+    -fx-font-size: 14;
+    -fx-alignment: center;
+    -fx-fill: #2B8A68;
+}
+
+.pagination > .pagination-control > .control-box > .right-arrow-button:hover {
+
+    -fx-background-color: #2b8a68;
+    -fx-text-fill: white;
+}
+
+.combo-box .arrow-button {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-background-color: #2B8A6815;
+    -fx-border-color: transparent;
+}
+
+.root {
+    -fx-page-bullet-border: #acacac;
+    -fx-page-indicator-hover-border: #accee5;
+
+    -fx-focused-text-base-color: ladder(
+            -fx-selection-bar,
+            -fx-light-text-color 45%,
+            -fx-dark-text-color 46%,
+            -fx-dark-text-color 59%,
+            -fx-mid-text-color 60%);
+
+    -fx-mark-color: white;
+
+}

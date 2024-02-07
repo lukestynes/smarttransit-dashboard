@@ -1,0 +1,24 @@
+.progress-bar {
+    -fx-indeterminant-bar-escape: true;
+    -fx-indeterminate-bar-animation-time: 2;
+
+}
+
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, #C5EDDF, #2b8a68);
+    -fx-background-radius: 5;
+    -fx-padding: 0.5em;
+}
+
+.progress-bar:indeterminate > .bar {
+    -fx-background-color: linear-gradient(to right, #C5EDDF, #2b8a68, #C5EDDF);
+}
+
+.progress-indicator {
+    -fx-indeterminate-segment-count: 10;
+    -fx-spin-enabled: true;
+    -fx-background-color: transparent;
+    -fx-progress-color: #2b8a68;
+    -fx-spacing: 0.1em;
+}
+

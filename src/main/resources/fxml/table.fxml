@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import org.controlsfx.control.*?>
+<?import org.kordamp.ikonli.javafx.*?>
+
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team5.gui.TableViewController">
+    <center>
+      <BorderPane BorderPane.alignment="CENTER">
+         <center>
+            <BorderPane>
+               <center>
+                  <StackPane BorderPane.alignment="BOTTOM_CENTER">
+                     <children>
+                        <Pagination fx:id="paginator" prefHeight="0.0" prefWidth="575.0">
+                           <StackPane.margin>
+                              <Insets bottom="5.0" />
+                           </StackPane.margin>
+                        </Pagination>
+                        <HBox alignment="CENTER" maxHeight="20.0" minHeight="-Infinity" prefHeight="0.0" prefWidth="0.0" StackPane.alignment="BOTTOM_CENTER">
+                           <children>
+                              <Button fx:id="firstPageButton" disable="true" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleFirstPage" prefHeight="20.0" prefWidth="30.0">
+                                 <HBox.margin>
+                                    <Insets bottom="2.5" right="120.0" top="2.5" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2p-page-first" iconSize="10" strokeType="OUTSIDE" strokeWidth="0.0" />
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="lastPageButton" layoutX="261.0" layoutY="545.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleLastPage" prefHeight="20.0" prefWidth="30.0">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets bottom="2.5" top="2.5" />
+                                 </HBox.margin>
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2p-page-last" iconSize="10" strokeType="OUTSIDE" strokeWidth="0.0" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets bottom="4.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="BOTTOM_RIGHT" maxHeight="25.0" maxWidth="163.0" StackPane.alignment="BOTTOM_RIGHT">
+                           <children>
+                              <TextField fx:id="pageNavigateField" minWidth="-Infinity" onAction="#handlePageNavigate" prefWidth="130.0" promptText="Navigate to page" />
+                              <Button fx:id="pageNavigateButton" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="2.0" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handlePageNavigate" prefHeight="26.0" prefWidth="50.0" text="Go">
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin></Button>
+                           </children>
+                           <padding>
+                              <Insets bottom="22.0" right="10.0" />
+                           </padding>
+                           <StackPane.margin>
+                              <Insets bottom="5.0" />
+                           </StackPane.margin>
+                        </HBox>
+                     </children>
+                  </StackPane>
+               </center>
+            </BorderPane>
+         </center>
+         <top>
+            <VBox>
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="3.0">
+                     <children>
+                        <CheckComboBox fx:id="columnGroupBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="125.0" title="Show Column Groups" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin></CheckComboBox>
+                        <CheckComboBox fx:id="columnComboBox" layoutX="93.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="125.0" title="Show Columns" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin></CheckComboBox>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Page Size:">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="15.0" right="2.0" top="5.0" />
+                           </HBox.margin>
+                        </Text>
+                        <ComboBox fx:id="paginationComboBox" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#handlePageSize" prefWidth="80.0" promptText="Page Size" visibleRowCount="11" />
+                     </children>
+                  </HBox>
+                  <HBox />
+               </children>
+            </VBox>
+         </top>
+      </BorderPane>
+   </center>
+</BorderPane>

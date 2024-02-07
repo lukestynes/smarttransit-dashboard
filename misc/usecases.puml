@@ -1,0 +1,37 @@
+@startuml
+left to right direction
+User << Human >>
+:UC Tile Server: as TileServer <<Web Service>>
+:UC Routing Server: as RouteServer <<Web Service>>
+Package Program {
+(Load Database) as LoadDB << UC_01 >>
+(Rename Database) as RenameDB << UC_11 >>
+(Delete Database) as DeleteDB << UC_12 >>
+(View Crash Table) as ViewTable << UC_02 >>
+(Search/Filter Crashes) as SearchFilter << UC_03 >>
+(View Crash Record) as ViewCrash << UC_04 >>
+(Sort Crashes) as SortTable << UC_05 >>
+(View Crash Chart) as ViewChart << UC_06 >>
+(View Crash Map) as ViewMap << UC_07 >>
+(Generate Crash Routes) as ViewRoutes << UC_08 >>
+(Change Colour Scheme) as Colour << UC_09 >>
+(View Help) as Help <<UC_10>>
+}
+User --> LoadDB
+User --> ViewTable
+User --> SearchFilter
+User --> ViewCrash
+User --> SortTable
+User --> ViewChart
+User --> ViewMap
+User --> ViewRoutes
+User --> Colour
+User --> Help
+User --> RenameDB
+User --> DeleteDB
+ViewMap --> TileServer
+ViewMap --> RouteServer
+ViewRoutes --> TileServer
+ViewRoutes --> RouteServer
+
+@enduml

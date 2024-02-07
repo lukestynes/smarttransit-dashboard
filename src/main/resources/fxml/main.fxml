@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import org.kordamp.ikonli.javafx.*?>
+
+<AnchorPane fx:id="root" cacheShape="false" centerShape="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pickOnBounds="false" prefHeight="600.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team5.gui.NavigationController">
+   <children>
+      <BorderPane fx:id="parentNode" layoutX="174.0" prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <BorderPane fx:id="topPane" maxHeight="60.0" minHeight="40.0" prefHeight="42.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+               <left>
+                  <HBox BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="helpButton" contentDisplay="CENTER" ellipsisString="" graphicTextGap="0.0" maxHeight="37.0" maxWidth="40.0" minHeight="37.0" minWidth="40.0" mnemonicParsing="false" onAction="#handleToggleHelpMode" prefHeight="37.0" prefWidth="40.0" textAlignment="CENTER">
+                           <graphic>
+                              <FontIcon id="icon" boundsType="VISUAL" iconColor="WHITE" iconLiteral="mdi2h-help" iconSize="20" strokeType="OUTSIDE" strokeWidth="0.0" text="󰋖" textAlignment="CENTER" textOrigin="CENTER" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets left="2.5" right="2.5" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="toggleSearchButton" graphicTextGap="0.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#handleToggleSearch" prefHeight="37.0" prefWidth="140.0" text="Show Filters" textFill="WHITE">
+                           <graphic>
+                              <FontIcon id="icon" iconColor="WHITE" iconLiteral="mdi2m-magnify" iconSize="20" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets left="2.5" right="2.5" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="2.5" top="2.5" />
+                     </BorderPane.margin>
+                  </HBox>
+               </left>
+               <right>
+                  <HBox>
+                     <children>
+                        <Button fx:id="tableButton" graphicTextGap="2.0" maxHeight="37.0" minHeight="37.0" mnemonicParsing="false" onAction="#setTableView" prefHeight="37.0" prefWidth="90.0" text="Table" textFill="WHITE" textOverrun="CLIP">
+                           <graphic>
+                              <FontIcon id="icon" iconColor="WHITE" iconLiteral="mdi2t-table" iconSize="20" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets left="2.5" right="2.5" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="mapButton" graphicTextGap="0.0" maxHeight="37.0" minHeight="37.0" mnemonicParsing="false" onAction="#setMapView" prefHeight="37.0" prefWidth="90.0" text="Map" textFill="WHITE" textOverrun="CLIP">
+                           <graphic>
+                              <FontIcon id="icon" iconColor="WHITE" iconLiteral="mdi2m-map-marker" iconSize="20" strokeType="OUTSIDE" strokeWidth="0.0" text="󰍎 " />
+                           </graphic>
+                           <padding>
+                              <Insets left="2.5" right="2.5" />
+                           </padding>
+                        </Button>
+                        <Button fx:id="chartButton" alignment="CENTER" maxHeight="37.0" minHeight="37.0" mnemonicParsing="false" onAction="#setChartView" prefHeight="37.0" prefWidth="90.0" text="Chart" textFill="WHITE" textOverrun="CLIP">
+                           <graphic>
+                              <FontIcon id="icon" iconColor="WHITE" iconLiteral="mdi2c-chart-areaspline" iconSize="20" selectionFill="#ffffff00" strokeType="OUTSIDE" strokeWidth="0.0" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets left="2.5" right="2.5" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="openMenuButton" maxHeight="37.0" minHeight="37.0" mnemonicParsing="false" onAction="#handleToggleSidePane" prefHeight="37.0" prefWidth="40.0">
+                           <graphic>
+                              <FontIcon id="icon" iconColor="WHITE" iconLiteral="mdi2m-menu" iconSize="20" strokeType="OUTSIDE" strokeWidth="0.0" text="󰍜" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets left="2.5" right="2.5" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="2.5" top="2.5" />
+                     </BorderPane.margin>
+                  </HBox>
+               </right>
+               <center>
+                  <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="685.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Text fx:id="databaseLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="No data loaded...">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="2.5" top="2.5" />
+                     </BorderPane.margin>
+                  </HBox>
+               </center></BorderPane>
+         </top>
+         <center>
+            <BorderPane BorderPane.alignment="CENTER">
+               <center>
+                  <StackPane>
+                     <children>
+                        <AnchorPane fx:id="mainPane" prefHeight="200.0" prefWidth="200.0" />
+                        <ProgressIndicator fx:id="updatingIcon" maxHeight="50.0" maxWidth="50.0" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0" style="-fx-accent: #2B8A68;" />
+                     </children>
+                  </StackPane>
+               </center>
+               <left>
+                  <AnchorPane fx:id="searchContainer" maxHeight="1.7976931348623157E308" maxWidth="250.0" minHeight="0.0" minWidth="0.0" prefWidth="0.0" visible="false" BorderPane.alignment="CENTER" />
+               </left>
+            </BorderPane>
+         </center>
+         <right>
+            <BorderPane fx:id="sidePane" maxWidth="225.0" minWidth="225.0" prefWidth="225.0" BorderPane.alignment="CENTER">
+               <center>
+
+               </center>
+               <center>
+                  <BorderPane BorderPane.alignment="CENTER">
+                     <center>
+                        <VBox alignment="TOP_CENTER" prefWidth="180.0">
+                           <children>
+                              <ComboBox fx:id="databaseDropdown" maxWidth="1.7976931348623157E308" promptText="Select a database">
+                                 <VBox.margin>
+                                    <Insets left="10.0" right="10.0" top="5.0" />
+                                 </VBox.margin></ComboBox>
+                              <AnchorPane fx:id="dbContainer" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                     </center>
+                  </BorderPane>
+               </center></BorderPane>
+         </right>
+      </BorderPane>
+   </children>
+</AnchorPane>

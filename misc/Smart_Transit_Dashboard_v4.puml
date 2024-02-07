@@ -1,0 +1,369 @@
+@startuml
+'https://plantuml.com/class-diagram
+hide empty methods
+hide empty attribute
+skinparam lineType ortho
+
+package Backend
+{
+
+
+Exception QueryNotBuildException <<SQLQueryObject not built correctly>>
+{
+
+}
+
+Class CrashManager <<handels data retrival requests>>
+ {
+    +void initDatabase()
+    +void addCrashFromFile(File csvFile, String tableName,
+     String tableString, DBViewController dbViewController)
+    +void renameTable(String dbName, String newName,
+      DBViewController dbViewController)
+    +void runTableQuery(Search searchQuery, ResultSetListener callingInstance)
+    +ArrayList<CrashCount> runChartQuery(Search searchQuery,
+     GenericChart.Categories category)
+    +ArrayList<CrashCount> runDoubleChartQuery(Search searchQuery,
+    GenericChart.Continuous xCategory, GenericChart.Categories yCategory, String value)
+    +ArrayList<MapPinDatapoint> runMapQuery(Search searchQuery)
+    +void numResults(Search searchQuery, ArrayList<ResultNumberListener> callingClass)
+
+
+ }
+ CrashDAO --* CrashManager
+ CSVManager -* CrashManager
+ CrashManager..>GenericChart
+ CrashManager..>Search
+ CrashManager-->CrashFromFile
+ CrashManager-->SQLQueryObject
+ TableManager *- CrashManager
+
+ Class ChartManager <<handles chart related logic>>
+ {
+    +{static} public void changeChartType
+    +void drawChart
+    +void drawPieChart
+    +void drawLineChart
+ }
+CrashManager --* ChartManager
+ChartManager --> GenericChart
+
+
+Class CrashDAO <<edits Database>>
+{
+    +void resetDB()
+    +CrashFromDatabase getOne(int ID)
+    +AsynchronousSelectQuery queryAll(String sql)
+    +AsynchronousCountQuery queryAllCount(String sql,
+     ArrayList<ResultNumberListener> callingClass, Search searchObject)
+    ArrayList<CrashCount> chartQueryAll(String sql,
+     Continuous category)
+    +ArrayList<CrashCount> catChartQueryAll(String sql,
+      Categories category)
+    +int queryAllCount(String sql)
+    +int add(CrashFromFile toAdd)
+    +void addBatch(List<CrashFromFile> toAdd,String tableName, String tableString,
+          Consumer<Integer> progressCallback, Consumer<String> messageCallback)
+    +ArrayList<MapPinDatapoint> queryMap(String sql)
+    +void generateIndex(String tableName)
+    +void createTable(String tableName)
+    +void renameTable(String dbName, String newName)
+
+
+}
+CrashDAO *- DatabaseManager
+
+
+Class CrashFromFile <<Stores 1 crash>>
+{
+    stores crash data in original types
+}
+
+Class CSVManager <<Loads CSVFiles>>
+{
+    -CrashFromFile toCrashRecord(String[] record)
+    +ArrayList<CrashFromFile> readFile(File csvFile)
+}
+CSVManager -> CrashFromFile
+
+
+Class DatabaseManager <<Controls database connection>>
+{
+    -{static} DatabaseManager instance
+    -DatabaseManager(String urlIn)
+    +{static} DatabaseManager getInstance()
+    -String getDatabasePath()
+    +Connection connect()
+    +void resetDatabase()
+    -boolean checkDatabaseExists(String url)
+    -void createDatabaseFile(String url)
+    -void executeSQLScript(InputStream sqlFile)
+
+
+}
+
+Class SQLQueryObject <<Builds Sql String>>
+{
+    +SQLQuerryObject(String tableName,
+     Search searchQuery)
+     +void buildCountQuery()
+     +void buildSelectQuery()
+     +void buildChartQuery(
+     GenericChart.Categories category)
+     +String getSql()
+}
+
+SQLQueryObject --> QueryNotBuildException : <<Throws>>
+
+
+
+
+Class Conditionals <<Stores Search Condition>>
+{
+    +enum Operator
+    +enum Column
+    +String value1
+    +String value2
+
+}
+
+Class GenericChart <<Describes graphs>>
+{
+    +enum ChartType
+    +enum Categories
+    +enum Continuous
+}
+
+Class Search <<Stores Search Parameters>>
+{
+    +pagination_information
+    +sort_information
+    +search_constraints
+}
+Search *- Conditionals
+
+
+Class TableManager <<Draws the table contents>>
+{
+    +void init(Pagination paginator,Search search,
+     TableViewController tableViewController)
+    +void setRows()
+    +void toPage(Integer pageNumber)
+    +public void updateVisibleGroups(ListChangeListener.Change c,
+     CheckComboBox columnBox, CheckComboBox groupBox)
+    +updateVisibleColumns(ListChangeListener.Change c,
+     CheckComboBox columnBox, CheckComboBox groupBox)
+    +public String generateGroupString(TableColumns.ColumnGroup group,
+     Integer selected)
+    +String removeStartFromString(String colGroupString)
+    +void handlePageSizeChange(Integer oldSize, Integer newSize)
+    +Integer getNumResults()
+
+
+}
+
+
+ !startsub Asynchronous
+package "Asynchronous queries"
+{
+class AsynchronousChartQuery <<Runs Categorical Chart Query>>
+{
++AsynchronousChartQuery (String sqlString,
+ DatabaseManager, chartType)
++void run()
++ArrayList<CrashCount> getResult()
+}
+class AsynchronousCountQuery <<Counts records in result>>
+{
++AsynchronousCountQuery (String sqlString,
+ DatabaseManager, ArrayList<ResultNumberListener>, Search)
++void run()
+}
+class AsynchronousMapQuery <<Gets data info for Map pins>>
+{
++AsynchronousChartQuery (String sqlString,
+ DatabaseManager)
++void run()
++ArrayList<CrashCount> getResult()
+}
+class AsynchronousSelectQuery <<Searches for records>>
+{
++AsynchronousCountQuery (String sqlString,
+ DatabaseManager, ResultSetListener>, Search)
++void run()
+}
+AsynchronousSelectQuery *-- CrashFromDatabase
+AsynchronousChartQuery *-- CrashCount
+AsynchronousMapQuery *-- MapPinDatapoint
+
+Class CrashFromDatabase <<Stores 1 crash>>
+{
+    stores crash data in string types
+}
+
+ Class CrashCount <<stores value & occurrences>>
+ {
+    -Integer count
+    -String category
+ }
+
+Class MapPinDatapoint <<stores value For map Pins>>
+{
+ -Integer id
+ -double lat
+ -double lng
+ -Integer crashYear
+ -String crashSeverity
+
+}
+
+}
+CrashManager *----- "Asynchronous queries"
+
+Interface ResultNumberListener
+{
++ void updateNumRow(Integer newNum, Search searchObject)
+}
+Interface ResultSetListener
+{
++ void RowsUpdate(ArrayList<CrashFromDatabase> newValues,
+ Search searchObject);
+}
+
+
+
+}
+!endsub Asynchronous
+
+package Frontend
+{
+
+Class NavigationController <<Main App Window>>
+{
+    +void init(Stage stage)
+    #void importCrashData()
+    #void setTableView()
+    #void setChartView()
+    #void setHomeView()
+    #void handleToggleSidePane()
+    #void handleToggleSearch()
+    +void updateFromSearch()
+
+
+}
+NavigationController *-- TableViewController
+NavigationController *-- SearchPanelController
+NavigationController *---- CrashManager
+
+Class SearchPanelController <<Runs Search panel>>
+{
+    +void init(Stage stage, Search search,
+     NavigationController navigationController)
+    loads selected gui options to search object
+}
+SearchPanelController *- Search
+
+Class TableViewController <<manages table gui>>
+{
+    +void init(Stage stage, Search search)
+    #void handlePageNavigate()
+    #void handleFirstPage()
+    #void handleLastPage()
+    #void handlePageSize()
+    +public void updateFromSearch()
+    +public Text getSearchResultLabel()
+    +public TableManager getTableManager()
+}
+TableManager *-- ExtendedViewController
+TableManager *--* TableViewController
+
+
+Class ExtendedViewController <<Detailed record modal>>
+{
+    +void init(CrashFromDatabase selected)
+    +void showExtendedView(CrashFromDatabase selected)
+    +void populateData(CrashFromDatabase selected)
+
+}
+
+
+Class ChartViewController <<handles gui triggers>>
+{
+    -void handleChartChange()
+    -void changeChartType()
+    #void handleVarOneChange()
+    #void handleToggleCreateButton()
+    #void createGraph()
+    +void updateFromSearch()
+}
+ChartViewController *-- ChartManager
+ChartViewController -> GenericChart
+
+Class MapViewController <<Manages Map data>>
+{
+    +void generateRoutes(MapPin source, MapPin Destination)
+    +void createRoutePins()
+    +ArrayList<MapPinDatapoint> generateRoutePolygon(
+    ArrayList<MapPin> coords)
+    +void goToLocation()
+    +void openMap()
+    +void openRoute()
+}
+
+
+
+Class DBViewController <<Manages multiple DB Tables>>
+{
++void handleListSelect(Object selectedRow)
++void handleAddDB()
++void selectCSVFile()
++void createTableNamer(File csvFile)
++createTableRenamer(String dbName, String currentName)
++void createTableDeleter(String dbName, String tableName, VBox row)
++void loadTables()
+
+}
+
+
+Class Route <<Stores a route>>
+{
+- List<MapPin> route
++Route(MapPin ...points)
++toJSONArray()
+}
+Class MapPin <<Stores a location on Map>>
+{
++double lat
++double lng
++String name
+}
+MapViewController *-- Route
+MapViewController *- MapPin
+Route *- MapPin
+
+
+TableManager ..|> ResultSetListener
+TableManager ..|> ResultNumberListener
+NavigationController ....|> ResultNumberListener
+
+
+
+}
+
+MapViewController --* NavigationController
+DBViewController --* NavigationController
+DBViewController ----> CrashManager
+
+
+AsynchronousCountQuery ----> NavigationController
+AsynchronousCountQuery ----> TableViewController
+AsynchronousChartQuery ----> CrashManager
+AsynchronousSelectQuery ----> TableManager
+AsynchronousMapQuery ----> CrashManager
+
+"Asynchronous queries" -----> Search
+Frontend ---> CrashManager
+CrashManager ---> CrashCount
+CrashManager *----- "Asynchronous queries"
+
+@enduml
